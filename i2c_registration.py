@@ -1,6 +1,9 @@
+import traceback
 class Tools:
     def __init__(self):
-        self.__name__ = 'Tools'
+        (_,_,_,text)=traceback.extract_stack()[-2]
+        self.instance_name = text[:text.find('=')].strip()
+        self.info = traceback.extract_stack()[-2]
         self.pliers = dict()
         self.wrench = dict()
         self.screwdrivers = dict()
@@ -12,23 +15,16 @@ class Tools:
             self.pliers[tool]
 
 
-    def register_tool(func, cls):
-    
-        print(cls.__name__)
-    
+    # def tool_factory(self, color):
+    def register_tool(self, func):
         def wrapper(*args, **kwargs):
             print('registering tool')
-            # cls.pliers[f'{func.__name__}'] =
             out = func(*args, **kwargs)
-            print('tool registered')
+            print(f'"{func.__name__}" registered to "{self.instance_name}"')
             return out
         # return wrapper
-        cls.pliers[f'{func.__name__}'] = wrapper
-
-
-
-
-
+        self.pliers[f'{func.__name__}'] = wrapper
+        # return register_tool
 
 
 # def register_i2c_function(address, cmd, num_bytes, hash_func=None):
@@ -49,13 +45,15 @@ class Tools:
     # return decorator
 
 tools = Tools()
+print(tools.info)
 
 
+@tools.register_tool
 def needlenose(plier_cnt):
     print('needlenose')
     return plier_cnt
 
-register_tool(func=needlenose, cls=tools)
+# tools.register_tool(func=needlenose)
 print("-"*25)
 # b(5)
 # b(7)
