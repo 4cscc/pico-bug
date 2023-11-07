@@ -56,12 +56,15 @@ def crc8(msg):
         crc &= 0xff
     final = [crc ^ 0x00]
     print(final)
-    return str(final)
+#     return str(final)
+
+# if __name__ == '__main__':
+#     i2c = machine.I2C(0, sda=machine.Pin(0), scl=machine.Pin(1), freq=400000)
+#     i2c.write (0x59, crc8(b'0x20, 0x03'))
+
 
 if __name__ == '__main__':
-    i2c = machine.I2C(0, sda=machine.Pin(0), scl=machine.Pin(1), freq=400000)
-    i2c.write (0x59, crc8(b'0x20, 0x03'))
-
+    connect_network()
 
 
 # Included as a demo of how to create a custom CRC hash function

@@ -1,9 +1,18 @@
 # import inspect
-from demo_i2c import INIT_AIR_QUALITY
+# from demo_i2c import INIT_AIR_QUALITY
 import time
 import machine
-from util import connect_network, crc8, try_until_i2c
-import umqtt.simple as mqtt
+from util import connect_network  # , crc8, try_until_i2c
+
+# TODO: add a way to register a fun
+try:
+    import umqtt.simple as mqtt
+except ImportError:
+    connect_network()
+    import mip
+    mip.install('umqtt.simple')
+    import umqtt.simple as mqtt
+
 import json
 # from demo_i2c import create_message_packet
 
@@ -136,7 +145,6 @@ class Sensor:
 
 
     def run(self):
-        print(self.i2c_bus.scan())
         while True:
             for name, func in self.measurement_functions.items():
                 print(name, func())
@@ -174,7 +182,7 @@ if __name__ == "__main__":
 
     # INIT_AIR_QUALITY = bytearray([0x20, 0x03])
     # INIT_AIR_QUALITY = b'\x20\x03'
-    MEASURE_AIR_QUALITY = bytearray([0x20, 0x08])
+    # MEASURE_AIR_QUALITY = bytearray([0x20, 0x08])
     # MEASURE_RAW_SIGNALS = bytearray([0x20, 0x50])
     # sensor.register_i2c_sensor_measurement_function(name = "air_quality_init", address=0x58, cmd=INIT_AIR_QUALITY, num_bytes=0)
     # sensor.register_i2c_sensor_measurement_function("measure_air_quality",
@@ -182,10 +190,10 @@ if __name__ == "__main__":
                                                     # cmd=MEASURE_AIR_QUALITY,
                                                     # num_bytes=3
                                                     # )
-    @sensor.register_measurement_function
-    def measure_air_quality(cls):
-        cls.write_i2c(0x58, MEASURE_AIR_QUALITY)
-        return cls.read_i2c(0x58, 3)
-
+    # @sensor.register_measurement_function
+    # def measure_air_quality(cls):
+        # cls.write_i2c(0x58, MEASURE_AIR_QUALITY)
+        # return cls.read_i2c(0x58, 3)
+# 
 
     sensor.run()
