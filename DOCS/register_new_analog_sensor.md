@@ -8,6 +8,8 @@ like them to be called and the pin from which the analog reading should be
 taken. The reading is taken using the Micropython `machine.ADC.read_u16`
 function.
 
+In addition to specifying the pin to be read and correctly attaching it, you should hook the power supply of the sensor to the `ADC_VREF` pin on the Pico(that is, pin #35).
+
 ### Registering the Soil Moisture Sensor
 
 
