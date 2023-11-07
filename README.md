@@ -1,8 +1,6 @@
-## Setup
+# Four Corners Sensor Firmware
 
-- Install `pyserial` library
-    - `pip install pyserial` in development environment
+- Designed to be used on Raspberry Pi Pico rp2040 based boards, but could be
+used on any board that has a Micropython port.
 
-- Install `umqtt.simple` library on pico
-    - `pip install mpremote` in development environment
-    - `mpremote connect <path to COM port> mip install umqtt.simple`
+- See [documentation](./DOCS/) for how to define and register various external sensors.
