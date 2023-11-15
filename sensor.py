@@ -1,6 +1,6 @@
 import time
 import machine
-from lib.util import connect_network
+from util import connect_network, _i2c_function_
 
 # TODO: add a way to register a fun
 try:
@@ -14,7 +14,7 @@ except ImportError:
 import json
 
 class Sensor:
-    def __init__(self, sensor_name, topic='sensor_data', indicator_pin="LED", reporting_interval_sec=5, I2CSensor=False) -> None:
+    def __init__(self, sensor_name, topic='sensor_data', indicator_pin="LED", reporting_interval_sec=5, I2CSensor=False, wdt=None) -> None:
         self.sensor_name = sensor_name
         self.status = "initializing"
         self.network = None
@@ -25,6 +25,13 @@ class Sensor:
         self.indicator_pin = machine.Pin(indicator_pin, machine.Pin.OUT)
         self.reporting_interval_sec = reporting_interval_sec
         self.pins = set()
+        self.wdt = wdt
+
+        # setup i2c bus
+        if I2CSensor:
+            self.i2c_bus = machine.SoftI2C(sda=machine.Pin(0), scl=machine.Pin(1))
+        else:
+            self.i2c_bus = None
 
         # TODO: turn back on
         try:
@@ -57,12 +64,22 @@ class Sensor:
         self.measurement_functions[name] = machine.ADC(pin).read_u16
         print("{}: {}".format(name, self.measurement_functions[name]()))
 
+    
+    def register_i2c_sensor_function(self, measurement_name, func):
+        if self.i2c_bus is None:
+            self.i2c_bus = machine.SoftI2C(sda=machine.Pin(0),
+                                           scl=machine.Pin(1))
+            print("I2C bus initialized")
+
+        self.measurement_functions[measurement_name] = func
+
     def measurements(self):
         measurements = json.dumps(
             {
                 "sensor": self.sensor_name,
                 "data": {
-                    key: value() for key, value in self.measurement_functions.items()
+                    key: value() for key, value in 
+                    self.measurement_functions.items()
                    },
                }
            )
@@ -80,17 +97,11 @@ class Sensor:
         self.indicator_pin.off()
         time.sleep(self.reporting_interval_sec)
 
-
     def run(self):
         while True:
             for name, func in self.measurement_functions.items():
                 print(name, func())
             self.publish()
             time.sleep(self.reporting_interval_sec)
+            self.wdt.feed()
 
-
-if __name__ == "__main__":
-    sensor = Sensor(sensor_name="soil_moisture_demo_1")
-    sensor.register_analog_sensor_function("soil_moisture", 28)
-
-    sensor.run()

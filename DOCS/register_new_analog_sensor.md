@@ -1,6 +1,6 @@
-# Register New Analog Sensor
+## Register New Analog Sensor
 
-Analog sensors can be registered by passing a dictionary and base sensor instance to the `registre_analog_function_to_sensor` function found in the `registration` module.
+Analog sensors can be registered by passing a dictionary and base sensor instance to the `register_analog_function_to_sensor` function found in the `registration` module.
 
 Because the analog sensors rely on directly taking a reading from the end-point
 sensor, the only things we need to tell our board about them is what we would

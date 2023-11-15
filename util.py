@@ -56,6 +56,8 @@ def crc8(msg):
         crc &= 0xff
     final = [crc ^ 0x00]
     print(final)
+    
+
 #     return str(final)
 
 # if __name__ == '__main__':
